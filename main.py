@@ -1,2 +1,1 @@
-for i in "Hello World!":
-    print(i)
+print("Hello World!"[::-1])
