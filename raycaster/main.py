@@ -1,27 +1,34 @@
+#imports
 import turtle as t
 import random
 import math as m
-import numpy as n
 import keyboard as k
 import pygame as pg
-
+#initialise engine
 t.speed(0)
 t.tracer(0,0)
 t.pensize(4)
 pg.init()
-clock = pg.time.Clock()
+clock=pg.time.Clock()
 deltatime=0.05
-map = [[1,1,1,1,1,1,1,1],
-       [1,0,0,0,0,0,0,1],
-       [1,0,0,2,0,0,0,1],
-       [1,0,0,0,0,0,0,1],
-       [1,0,0,0,0,0,0,1],
-       [1,0,0,0,0,2,0,1],
-       [1,0,0,0,0,0,0,1],
-       [1,1,1,1,1,1,1,1]]
+#initialise map
+map = [[2,0,0,0,0,0,2,0],
+       [0,0,0,0,0,0,0,0],
+       [0,0,0,2,0,1,0,0],
+       [0,0,0,0,0,0,0,0],
+       [0,0,0,0,0,0,0,0],
+       [0,0,0,0,1,2,0,0],
+       [0,0,0,0,0,0,0,0],
+       [0,0,0,1,0,0,0,1]]
 
 def findCell(X,Y):
-    return map[int(X)][int(Y)]
+    cx=int(X)
+    cy=int(Y)
+    if ((X>0 and X<len(map[0])) and (Y>0 and Y<len(map))):
+        return map[cx][cy]
+    else:
+        return 1
+#initialise player
 px=4.01
 py=4.01
 pdx=0.00
@@ -38,6 +45,7 @@ while running:
     if findCell(px+pdx,py+pdy) <= 0:
         px+=pdx
         py+=pdy
+    #handle controls
     if k.is_pressed("w"):yv+=500.0*deltatime
     if k.is_pressed("s"):yv-=500.0*deltatime
     if k.is_pressed("a"):xv-=500.0*deltatime
@@ -51,8 +59,9 @@ while running:
         yv=0.00
         pdx=0.00
         pdy=0.00
+    #clear the screen
     t.clear()
-
+    #start iterating through the lines on the screen
     for i in range(200):
         rx=px
         ry=py
@@ -73,21 +82,28 @@ while running:
             ry+=ryd*D
             rl+=D
             try:
+                #get the cell at the ray's position
                 cell=findCell(rx,ry)
                 if cell > 0:
                     l=rl
                     rl=20.00
+                    #set the colour of the line
                     if cell==2:
                         t.pencolor("red")
                     else:
                         t.pencolor("black")
+            #oh no your outside the world!
             except:
                 l=.001
                 rl=20.00
                 print("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")
+        #draw the line
         t.teleport((i-100)*4,200./max(l*m.cos(ra-pa),0.001))
         t.setpos((i-100)*4,-200./max(l*m.cos(ra-pa),0.001))
+    #update the screen
     t.update()
+    #set delta time and tick the clock
     deltatime=clock.tick()/1000.0
+#finish the program
 t.done()
 pg.quit()
