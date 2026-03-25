@@ -29,13 +29,21 @@ def findCell(X,Y):
     else:
         return 1
 #initialise player
+#player x
 px=4.01
+#player y
 py=4.01
+#player delta x
 pdx=0.00
+#player delta y
 pdy=0.00
+#player angle facing
 pa=0.001
+#player velocity x
 xv=0.00
+#player velocity y
 yv=0.00
+#start loop
 running = True
 while running:
     pdx=(yv*m.sin(pa)+xv*m.cos(pa))*.005*deltatime
