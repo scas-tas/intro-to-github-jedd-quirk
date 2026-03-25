@@ -17,7 +17,7 @@ map = [[2,0,0,0,0,0,2,0],
        [0,0,0,2,0,1,0,0],
        [0,0,0,0,0,0,0,0],
        [0,0,0,0,0,0,0,0],
-       [0,0,0,0,1,2,0,0],
+       [0,0,0,0,3,2,0,0],
        [0,0,0,0,0,0,0,0],
        [0,0,0,1,0,0,0,1]]
 
@@ -48,8 +48,10 @@ running = True
 while running:
     pdx=(yv*m.sin(pa)+xv*m.cos(pa))*.005*deltatime
     pdy=(yv*m.cos(pa)-xv*m.sin(pa))*.005*deltatime
+    #add friction
     xv*=.95
     yv*=.95
+    #collision check
     if findCell(px+pdx,py+pdy) <= 0:
         px+=pdx
         py+=pdy
@@ -98,6 +100,8 @@ while running:
                     #set the colour of the line
                     if cell==2:
                         t.pencolor("red")
+                    elif cell==3:
+                        t.pencolor("blue")
                     else:
                         t.pencolor("black")
             #oh no your outside the world!
