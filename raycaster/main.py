@@ -14,10 +14,10 @@ deltatime=0.05
 #initialise map
 map = [[2,0,0,0,0,0,2,0],
        [0,0,0,0,0,0,0,0],
-       [0,0,0,2,0,1,0,0],
        [0,0,0,0,0,0,0,0],
        [0,0,0,0,0,0,0,0],
-       [0,0,0,0,3,2,0,0],
+       [0,0,0,0,0,0,0,0],
+       [0,0,0,0,0,0,0,0],
        [0,0,0,0,0,0,0,0],
        [0,0,0,1,0,0,0,1]]
 
@@ -63,12 +63,7 @@ while running:
     if k.is_pressed("left"):pa-=2.0*deltatime
     if k.is_pressed("right"):pa+=2.0*deltatime
     if k.is_pressed("esc"):
-        px=4.01
-        py=4.01
-        xv=0.00
-        yv=0.00
-        pdx=0.00
-        pdy=0.00
+        running=False
     #clear the screen
     t.clear()
     #start iterating through the lines on the screen
