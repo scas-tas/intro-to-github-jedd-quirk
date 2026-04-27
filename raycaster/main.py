@@ -112,5 +112,4 @@ while running:
     #set delta time and tick the clock
     deltatime=clock.tick()/1000.0
 #finish the program
-t.done()
 pg.quit()
