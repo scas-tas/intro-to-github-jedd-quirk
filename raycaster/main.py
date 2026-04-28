@@ -3,14 +3,12 @@ import turtle as t
 import random
 import math as m
 import keyboard as k
-import pygame as pg
+import time
 #initialise engine
 t.speed(0)
 t.tracer(0,0)
 t.pensize(4)
-pg.init()
-clock=pg.time.Clock()
-deltatime=0.05
+deltatime=1.00/int(input("Framerate: "))
 #initialise map
 map = [[2,0,0,0,0,0,2,0],
        [0,0,0,0,0,0,0,0],
@@ -46,11 +44,11 @@ yv=0.00
 #start loop
 running = True
 while running:
-    pdx=(yv*m.sin(pa)+xv*m.cos(pa))*.005*deltatime
-    pdy=(yv*m.cos(pa)-xv*m.sin(pa))*.005*deltatime
+    pdx=(yv*m.sin(pa)+xv*m.cos(pa))*.3*deltatime
+    pdy=(yv*m.cos(pa)-xv*m.sin(pa))*.3*deltatime
     #add friction
-    xv*=.95
-    yv*=.95
+    xv*=.9
+    yv*=.9
     #collision check
     if findCell(px+pdx,py+pdy) <= 0:
         px+=pdx
@@ -60,8 +58,8 @@ while running:
     if k.is_pressed("s"):yv-=500.0*deltatime
     if k.is_pressed("a"):xv-=500.0*deltatime
     if k.is_pressed("d"):xv+=500.0*deltatime
-    if k.is_pressed("left"):pa-=2.0*deltatime
-    if k.is_pressed("right"):pa+=2.0*deltatime
+    if k.is_pressed("left"):pa-=5.*deltatime
+    if k.is_pressed("right"):pa+=5.*deltatime
     if k.is_pressed("esc"):
         running=False
     #clear the screen
@@ -110,6 +108,5 @@ while running:
     #update the screen
     t.update()
     #set delta time and tick the clock
-    deltatime=clock.tick()/1000.0
-#finish the program
-pg.quit()
+    time.sleep(deltatime)
+#done!
