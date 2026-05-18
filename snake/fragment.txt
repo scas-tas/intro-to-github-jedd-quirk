@@ -36,9 +36,13 @@ void main() {
     v2 F = gl_FragCoord.xy;
     F*=RES/R;
     O=v4(0);
-    for (float i;i<6.3;O.a=i+=.1) {
-        
+    for (float i;i<6.3;O.a=i+=.15) {
+        v2 D,t=sin(i+v2(0,hp)),p=F;
+        for (int d;d++<10&&Pl<.5;p+=t*(1e-4+min(D.x,D.y))) {
+            D=(step(0.,t)-fract(p))/t;
+        }
+        O.rgb+=map(p);
     }
-
+    //O.rgb/=O.a;
     O.a=1.;
 }

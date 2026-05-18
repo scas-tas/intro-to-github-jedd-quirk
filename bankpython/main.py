@@ -1,5 +1,5 @@
 import random as r
-
+#import tkinter as tk
 class Account:
     def __init__(self, number, balance, owner):
         self.number = number
@@ -15,10 +15,15 @@ class Account:
         else:
             return f"Could not withdraw {amount} from your account because of insufficient funds! You can only withdraw {self.balance}."
     def gamble(self, amount):
-        if r.random()>0.80:
-            self.balance+=amount
+        if amount<=self.balance:
+            if r.random()>0.80:
+                self.balance+=amount
+                return f"You win! Your new balance is {self.balance}."
+            else:
+                self.balance-=amount
+                return f"You lose! Your new balance is {self.balance}."
         else:
-            self.balance-=amount
+            return "Insufficient funds!"
     def checkbalance(self):
         return f"Your current balance is {self.balance}."
 
@@ -36,11 +41,23 @@ while n.lower()!="quit":
             dn = int(input("Number: "))
             for i in accounts:
                 if i.number==dn:
-                    da=float(input("Amount:"))
+                    da=float(input("Amount: "))
                     print(i.deposit(da))
         case "seebal":
             bn=int(input("Number: "))
             for i in accounts:
-                if i.number==dn:
+                if i.number==bn:
                     print(i.checkbalance())
+        case "withdraw":
+            wn=int(input("Number:"))
+            for i in accounts:
+                if i.number==wn:
+                    wa=float(input("Amount: "))
+                    print(i.withdraw(wa))
+        case "gamble":
+            gn=int(input("Number:"))
+            for i in accounts:
+                if i.number==gn:
+                    ga=float(input("Amount: "))
+                    print(i.gamble(ga))
     n=input("Anything Else? ")

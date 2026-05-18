@@ -155,7 +155,7 @@ while True:
     frame_tex.use(0)
     program['tex'] = 0
     program['R'].value = pg.display.get_window_size()
-    program['time'].value = pg.time.get_ticks()
+    #program['time'].value = pg.time.get_ticks()
     render_object.render(mode=moderngl.TRIANGLE_STRIP)
 
     pg.display.flip()
