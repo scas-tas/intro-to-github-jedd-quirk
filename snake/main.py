@@ -1,265 +1,165 @@
-import pygame
+import pygame as pg
 import sys
 import random
-
-
-
+import array 
+import moderngl
+import ctypes
 
 class Snake:
-   """
-   Represents the player-controlled snake.
-  
-   Demonstrates ENCAPSULATION: bundles snake data (body, direction) with
-   snake behavior (move, grow, collision detection).
-  
-   Demonstrates ABSTRACTION: hides complex collision logic behind simple
-   method names like check_collision().
-   """
-  
-   def __init__(self):
-       """
-       Initialize the snake with default starting state.
-      
-       Instance variables:
-       - size: dimensions of each snake segment (10x10 pixels)
-       - body: list of (x, y) tuples representing snake segments
-       - direction: current movement direction
-       - change_to: pending direction change (prevents instant reversal)
-       """
-       self.size = 10
-       self.body = [(100, 50), (90, 50), (80, 50)]  # Head at index 0
-       self.direction = 'RIGHT'
-       self.change_to = self.direction  # Buffer for direction changes
-  
-   def change_direction(self):
-       """
-       Update direction if the change is valid (not reversing into self).
-      
-       ABSTRACTION: External code just sets change_to; this method handles
-       the complex logic of checking if the direction change is allowed.
-      
-       Uses any() with tuple of conditions to check all valid transitions.
-       Prevents snake from immediately reversing (e.g., RIGHT → LEFT).
-       """
-       if any((self.change_to == 'UP' and not self.direction == 'DOWN',
-               self.change_to == 'DOWN' and not self.direction == 'UP',
-               self.change_to == 'LEFT' and not self.direction == 'RIGHT',
-               self.change_to == 'RIGHT' and not self.direction == 'LEFT')):
-           self.direction = self.change_to
-  
-   def move(self):
-       """
-       Move the snake one step in its current direction.
-      
-       ENCAPSULATION: Movement logic is bundled with the snake's data.
-       External code doesn't need to know how the snake moves, just calls move().
-      
-       Algorithm:
-       1. Get current head position
-       2. Calculate new head position based on direction
-       3. Add new head to front of body
-       4. Remove tail (keeps snake same length unless growing)
-       """
-       x, y = self.body[0]  # Current head position
-      
-       # Calculate new head position (move by self.size pixels)
-       if self.direction == 'UP':
-           y -= self.size
-       elif self.direction == 'DOWN':
-           y += self.size
-       elif self.direction == 'LEFT':
-           x -= self.size
-       elif self.direction == 'RIGHT':
-           x += self.size
-      
-       # Update body: new head at front, remove tail
-       self.body = [(x, y)] + self.body[:-1]
-  
-   def grow(self):
-       """
-       Increase snake length by one segment.
-      
-       ABSTRACTION: Simple interface hides implementation detail.
-       Just appends a copy of the tail - when move() runs next, this
-       segment stays in place while a new head is added.
-       """
-       self.body.append(self.body[-1])
-  
-   def draw(self, surface):
-       """
-       Render the snake on the given pygame surface.
-      
-       ENCAPSULATION: Snake knows how to draw itself.
-      
-       Args:
-           surface: pygame Surface to draw on
-       """
-       for segment in self.body:
-           pygame.draw.rect(surface, (0, 255, 0),
-                          pygame.Rect(segment[0], segment[1], self.size, self.size))
-  
-   def check_collision(self, width, height):
-       """
-       Check if snake has collided with walls or itself.
-      
-       ABSTRACTION: Complex collision logic hidden behind simple method.
-       External code just calls this and gets True/False - doesn't need
-       to know how collision detection works.
-      
-       Args:
-           width: game window width
-           height: game window height
-          
-       Returns:
-           True if collision detected, False otherwise
-       """
-       x, y = self.body[0]  # Head position
-      
-       # Check wall collision
-       if x < 0 or x >= width or y < 0 or y >= height:
-           return True
-      
-       # Check self-collision (head touching any other body segment)
-       if (x, y) in self.body[1:]:
-           return True
-       else:
-           return False
+    def __init__(self):
+        self.size = 10
+        self.body = [(100, 50), (90, 50), (80, 50)]  # Head at index 0
+        self.direction = 'RIGHT'
+        self.change_to = self.direction  # Buffer for direction changes
+
+    def change_direction(self):
+        if any((self.change_to == 'UP' and not self.direction == 'DOWN',
+                self.change_to == 'DOWN' and not self.direction == 'UP',
+                self.change_to == 'LEFT' and not self.direction == 'RIGHT',
+                self.change_to == 'RIGHT' and not self.direction == 'LEFT')):
+            self.direction = self.change_to
+
+    def move(self):
+        x, y = self.body[0]
+
+        if self.direction == 'UP':
+            y -= self.size
+        elif self.direction == 'DOWN':
+            y += self.size
+        elif self.direction == 'LEFT':
+            x -= self.size
+        elif self.direction == 'RIGHT':
+            x += self.size
+        
+        self.body = [(x, y)] + self.body[:-1]
+
+    def grow(self):
+        self.body.append(self.body[-1])
+
+    def draw(self, surface):
+        for segment in self.body:
+            pg.draw.rect(surface, (0, 255, 0),
+                            pg.Rect(segment[0], segment[1], self.size, self.size))
+
+    def check_collision(self, width, height):
+        x, y = self.body[0]
+        if x < 0 or x >= width or y < 0 or y >= height:
+            return True
+        if (x, y) in self.body[1:]:
+            return True
+        else:
+            return False
 
 
 
 
 class Food:
-   """
-   Represents food that the snake can eat.
-  
-   Demonstrates ABSTRACTION: randomize_position() hides the complex
-   grid-aligned random positioning logic.
-  
-   This is a SEPARATE OBJECT from Snake - demonstrates creating multiple
-   instances of different classes that interact.
-   """
-  
-   def __init__(self, width, height):
-       """
-       Initialize food at a random position.
-      
-       Args:
-           width: game window width
-           height: game window height
-       """
-       self.size = 10
-       # Calculate random position aligned to grid
-       # (width - size) // size gives number of possible grid positions
-       # Multiply by size to convert grid position back to pixel coordinates
-       self.position = (random.randint(0, (width - self.size) // self.size) * self.size,
-                       random.randint(0, (height - self.size) // self.size) * self.size)
-  
-   def spawn(self, width, height):
-       """
-       Move food to a new random position.
-      
-       ABSTRACTION: Simple method name hides grid alignment calculations.
-       External code just calls spawn() - doesn't need to know the math.
-      
-       Args:
-           width: game window width 
-           height: game window height
-       """
-       self.position = (random.randint(0, (width - self.size) // self.size) * self.size,
-                       random.randint(0, (height - self.size) // self.size) * self.size)
-  
-   def draw(self, surface):
-       """
-       Render the food on the given pygame surface.
-      
-       ENCAPSULATION: Food knows how to draw itself.
-      
-       Args:
-           surface: pygame Surface to draw on
-       """
-       pygame.draw.rect(surface, (255, 0, 0),
-                       pygame.Rect(self.position[0], self.position[1], self.size, self.size))
+    def __init__(self, width, height):
+        self.size = 10
 
+        self.position = (random.randint(0, (width - self.size) // self.size) * self.size,
+                        random.randint(0, (height - self.size) // self.size) * self.size)
 
+    def spawn(self, width, height):
+        self.position = (random.randint(0, (width - self.size) // self.size) * self.size,
+                        random.randint(0, (height - self.size) // self.size) * self.size)
 
+    def draw(self, surface):
+        pg.draw.rect(surface, (255, 0, 0),
+                        pg.Rect(self.position[0], self.position[1], self.size, self.size))
 
-def game_loop():
-   """
-   Main game loop - handles initialization, event processing, and game logic.
-  
-   Demonstrates using MULTIPLE OBJECTS:
-   - snake: instance of Snake class
-   - food: instance of Food class
-  
-   These are separate objects with their own data and methods.
-   """
-   # Initialize pygame and create window
-   pygame.init()
-   width, height = 640, 480
-   window = pygame.display.set_mode((width, height))
-   pygame.display.set_caption("Snake Game")
-   clock = pygame.time.Clock()
-  
-   # Create game objects - two separate instances
-   snake = Snake()          # Snake object
-   food = Food(width, height)  # Food object
-  
-   # Game state
-   score = 0
-   font = pygame.font.SysFont('Arial', 24)
-   fps=5
-   # Main game loop
-   while True:
-       # Event handling
-       for event in pygame.event.get():
-           if event.type == pygame.QUIT:
-               pygame.quit()
-               sys.exit()
-           elif event.type == pygame.KEYDOWN:
-               # Set pending direction change (actual change happens in snake.change_direction())
-               if event.key == pygame.K_UP:
-                   snake.change_to = 'UP'
-               elif event.key == pygame.K_DOWN:
-                   snake.change_to = 'DOWN'
-               elif event.key == pygame.K_LEFT:
-                   snake.change_to = 'LEFT'
-               elif event.key == pygame.K_RIGHT:
-                   snake.change_to = 'RIGHT'
-      
-       # Update snake direction and position
-       snake.change_direction()
-       snake.move()
-      
-       # Check for food collision
-       if snake.body[0] == food.position:
-           snake.grow()        # Make snake longer
-           food.spawn(width, height)  # Move food to new position
-           score += 1
-           fps+=5//score+1
+def Quit():
+    pg.quit()
+    sys.exit()
 
-      
-       # Check for game over (wall or self collision)
-       if snake.check_collision(width, height):
-           if snake.body[0] in snake.body[1:]:
-               pygame.quit()
-               sys.exit()
-           else:
-               snake.body[0]=(snake.body[0][0]%width,snake.body[0][1]%height)
-      
-       # Render everything
-       window.fill((0, 0, 0))  # Clear screen
-       snake.draw(window)      # Snake draws itself
-       food.draw(window)       # Food draws itself
-      
-       # Draw score
-       score_text = font.render(f'Score: {score}', True, (255, 255, 255))
-       window.blit(score_text, (10, 10))
-      
-       pygame.display.flip()   # Update display
-       clock.tick(fps)          # 15 FPS
+pg.init()
+ctypes.windll.user32.SetProcessDPIAware()
+width, height = 320,180
 
+screen = pg.surface.Surface((width, height))
+REALRES = (ctypes.windll.user32.GetSystemMetrics(78), ctypes.windll.user32.GetSystemMetrics(79))
+display = pg.display.set_mode(REALRES,pg.OPENGL|pg.FULLSCREEN|pg.DOUBLEBUF)
+ctx = moderngl.create_context()
+pg.display.set_caption("Snake Game")
+clock = pg.time.Clock()
 
+quad_buffer = ctx.buffer(data=array.array('f',[
+    -1.0,1.0,
+    1.0,1.0,
+    -1.0,-1.0,
+    1.0,-1.0,
+]))
 
+vert_shader = open("vertex.txt","r").read()
+frag_shader = open("fragment.txt").read()
 
-if __name__ == "__main__":
-   game_loop()
+program = ctx.program(vertex_shader=vert_shader,fragment_shader=frag_shader)
+render_object = ctx.vertex_array(program,[(quad_buffer,"2f","vert")])
+
+def surf_to_texture(surf):
+    tex = ctx.texture(surf.get_size(),4)
+    tex.filter=(moderngl.NEAREST,moderngl.NEAREST)
+    tex.write(pg.image.tobytes(surf,"RGBA",1))
+    return tex
+
+snake = Snake()
+food = Food(width, height)
+
+score = 0
+font = pg.font.SysFont('Arial', 24)
+fps=8
+while True:
+    for event in pg.event.get():
+        if event.type == pg.QUIT:
+            Quit()
+        elif event.type == pg.KEYDOWN:
+            if event.key == pg.K_UP:
+                snake.change_to = 'UP'
+            elif event.key == pg.K_DOWN:
+                snake.change_to = 'DOWN'
+            elif event.key == pg.K_LEFT:
+                snake.change_to = 'LEFT'
+            elif event.key == pg.K_RIGHT:
+                snake.change_to = 'RIGHT'
+            if event.key == pg.K_ESCAPE:
+                Quit()
+    
+    if snake.body[0] == food.position:
+        snake.grow()        # Make snake longer
+        food.spawn(width, height)  # Move food to new position
+        score += 1
+        fps+=5//score+1
+
+    snake.change_direction()
+    snake.move()
+    
+    
+
+    if snake.check_collision(width, height):
+        if snake.body[0] in snake.body[1:]:
+            pg.quit()
+            sys.exit()
+        else:
+            snake.body[0]=(snake.body[0][0]%width,snake.body[0][1]%height)
+    
+    screen.fill((0, 0, 0))  # Clear screen
+    food.draw(screen)       # Food draws itself
+    snake.draw(screen)      # Snake draws itself
+    score_text = font.render(f'Score: {score}', False, (255, 255, 255)) #draw score
+    score_text.set_colorkey((0,0,0))
+    screen.blit(score_text, (10, 10)) #write score to main buffer
+
+    frame_tex = surf_to_texture(screen)
+    frame_tex.repeat_x = True
+    frame_tex.repeat_y = True
+    frame_tex.use(0)
+    program['tex'] = 0
+    program['R'].value = pg.display.get_window_size()
+    program['time'].value = pg.time.get_ticks()
+    render_object.render(mode=moderngl.TRIANGLE_STRIP)
+
+    pg.display.flip()
+
+    frame_tex.release()
+
+    clock.tick(fps)

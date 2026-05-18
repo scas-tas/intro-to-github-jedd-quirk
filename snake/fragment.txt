@@ -1,0 +1,44 @@
+#version 330 core
+precision highp float;
+uniform sampler2D tex;
+uniform vec2 R;
+uniform float time;
+#define N normalize
+#define v2 vec2
+#define v3 vec3
+#define v4 vec4
+#define T texture
+out vec4 O;
+
+const v2 RES = v2(320,180);
+v3 map(v2 p) {
+    return T(tex,p.xy/RES).rgb;
+}
+v4 h4(v4 X) {
+    uvec4 x=uvec4(abs(X*1e5)+1e4);
+    x=((x>>16U)^x.yzwx)*11111111U;
+    x=((x>>16U)^x.yzwx)*11111111U;
+    x=((x>>16U)^x.yzwx)*11111111U;
+    x=((x>>16U)^x.yzwx)*11111111U;
+    return v4(x)/float(0xffffffffU);
+}
+float A(v3 V) {return max(V.x,max(V.x,V.y));}
+#define Pl A(map(p.xy))
+v3 C(v3 p) {
+    v3 u = v3(fract(p.xy)-.5,p.z+.5-Pl);
+    return v3(abs(u.x)>max(abs(u.y),u.z),abs(u.y)>=max(abs(u.x),u.z),u.z>max(abs(u.x),abs(u.y)))*sign(u);
+}
+const float hp=asin(1.);
+const float pi=hp+hp;
+const float tp=pi+pi;
+const float ph = pi*(sqrt(5.)-1.);
+void main() {
+    v2 F = gl_FragCoord.xy;
+    F*=RES/R;
+    O=v4(0);
+    for (float i;i<6.3;O.a=i+=.1) {
+        
+    }
+
+    O.a=1.;
+}
