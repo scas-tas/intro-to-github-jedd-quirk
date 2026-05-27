@@ -1,5 +1,6 @@
 import random as r
-#import tkinter as tk
+import tkinter as tk
+import sys
 class Account:
     def __init__(self, number, balance, owner):
         self.number = number
@@ -7,7 +8,7 @@ class Account:
         self.owner = owner
     def deposit(self, amount):
         self.balance+=amount
-        return f"Successfully deposited {amount}. Your new balance is {self.balance}"
+        return f"Successfully deposited {amount}. Your new balance is {self.balance}."
     def withdraw(self, amount):
         if self.balance>=amount:
             self.balance-=amount
@@ -27,37 +28,50 @@ class Account:
     def checkbalance(self):
         return f"Your current balance is {self.balance}."
 
-def bankwelcome():
-    return input("Welcome to Bank Python! How can I help you today? ")
-n=bankwelcome()
 accounts=[]
-while n.lower()!="quit":
-    match n.lower():
-        case "newaccount":
-            newn=r.randint(0,9999)
-            accounts.append(Account(newn,float(input("Starting Balance: ")),input("Name: ")))
-            print(f"Your new account's number is {newn}")
-        case "deposit":
-            dn = int(input("Number: "))
-            for i in accounts:
-                if i.number==dn:
-                    da=float(input("Amount: "))
-                    print(i.deposit(da))
-        case "seebal":
-            bn=int(input("Number: "))
-            for i in accounts:
-                if i.number==bn:
-                    print(i.checkbalance())
-        case "withdraw":
-            wn=int(input("Number:"))
-            for i in accounts:
-                if i.number==wn:
-                    wa=float(input("Amount: "))
-                    print(i.withdraw(wa))
-        case "gamble":
-            gn=int(input("Number:"))
-            for i in accounts:
-                if i.number==gn:
-                    ga=float(input("Amount: "))
-                    print(i.gamble(ga))
-    n=input("Anything Else? ")
+def clearscreen():
+    for widget in root.winfo_children():
+        widget.destroy()
+def accountconfirm(entered):
+    accnum=len(accounts)
+    accounts.append(Account(accnum,0.00,entered))
+    popup=tk.Toplevel()
+    tk.Label(popup,text=f"New Account for {entered} with the number {accnum}.").pack()
+    tk.Button(popup,text="Done",command=home).pack()
+def newaccount():
+    clearscreen()
+    tk.Label(root,text="Name:").pack()
+    entry = tk.Entry(root)
+    entry.pack()
+    tk.Button(root,text="Enter",command=lambda: accountconfirm(str(entry.get()))).pack()
+def depositconfirm(amount,accnum):
+    fail=True
+    clearscreen()
+    for account in accounts:
+        if account.number==accnum:
+            fail=False
+            tk.Label(root,text=account.deposit(amount)).pack()
+            tk.Button(root,text="Done",command=home).pack()
+    if fail:
+        tk.Label(root,text="Failed to deposit, account does not exist.").pack()
+        tk.Button(root,text="Done",command=home).pack() 
+def deposit():
+    clearscreen()
+    tk.Label(root,text="Deposit Amount:").pack()
+    entry1 = tk.Entry(root)
+    entry1.pack()
+    tk.Label(root,text="Account Number:").pack()
+    entry2 = tk.Entry(root)
+    entry2.pack()
+    tk.Button(root,text="Enter",command=lambda: depositconfirm(float(entry1.get()),int(entry2.get()))).pack()
+def home():
+    clearscreen()
+    root.title("Bank Python")
+    tk.Label(root,text="Welcome to Bank Python").pack()
+    tk.Button(root,text="New Account",command=newaccount).pack()
+    tk.Button(root,text="Deposit",command=deposit).pack()
+root = tk.Tk()
+home()
+root.mainloop()
+print(len(accounts))
+sys.exit()
