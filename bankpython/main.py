@@ -64,12 +64,54 @@ def deposit():
     entry2 = tk.Entry(root)
     entry2.pack()
     tk.Button(root,text="Enter",command=lambda: depositconfirm(float(entry1.get()),int(entry2.get()))).pack()
+def withdrawconfirm(amount,accnum):
+    fail=True
+    clearscreen()
+    for account in accounts:
+        if account.number==accnum:
+            fail=False
+            tk.Label(root,text=account.withdraw(amount)).pack()
+            tk.Button(root,text="Done",command=home).pack()
+    if fail:
+        tk.Label(root,text="Failed to withdraw, account does not exist.").pack()
+        tk.Button(root,text="Done",command=home).pack() 
+def withdraw():
+    clearscreen()
+    tk.Label(root,text="Withdraw Amount:").pack()
+    entry1 = tk.Entry(root)
+    entry1.pack()
+    tk.Label(root,text="Account Number:").pack()
+    entry2 = tk.Entry(root)
+    entry2.pack()
+    tk.Button(root,text="Enter",command=lambda: withdrawconfirm(float(entry1.get()),int(entry2.get()))).pack()
+def gambleconfirm(amount,accnum):
+    fail=True
+    clearscreen()
+    for account in accounts:
+        if account.number==accnum:
+            fail=False
+            tk.Label(root,text=account.gamble(amount)).pack()
+            tk.Button(root,text="Done",command=home).pack()
+    if fail:
+        tk.Label(root,text="Failed to gamble, account does not exist.").pack()
+        tk.Button(root,text="Done",command=home).pack()
+def gamble():
+    clearscreen()
+    tk.Label(root,text="Gamble Amount:").pack()
+    entry1 = tk.Entry(root)
+    entry1.pack()
+    tk.Label(root,text="Account Number:").pack()
+    entry2 = tk.Entry(root)
+    entry2.pack()
+    tk.Button(root,text="Enter",command=lambda: gambleconfirm(float(entry1.get()),int(entry2.get()))).pack()
 def home():
     clearscreen()
     root.title("Bank Python")
     tk.Label(root,text="Welcome to Bank Python").pack()
     tk.Button(root,text="New Account",command=newaccount).pack()
     tk.Button(root,text="Deposit",command=deposit).pack()
+    tk.Button(root,text="Withdraw",command=withdraw).pack()
+    tk.Button(root,text="Gamble",command=gamble).pack()
 root = tk.Tk()
 home()
 root.mainloop()
