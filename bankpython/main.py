@@ -1,6 +1,8 @@
 import random as r
 import tkinter as tk
+from tkinter import ttk
 import sys
+import time
 class Account:
     def __init__(self, number, balance, owner):
         self.number = number
@@ -27,23 +29,35 @@ class Account:
             return "Insufficient funds!"
     def checkbalance(self):
         return f"Your current balance is {self.balance}."
+class SavingsAccount(Account):
+    def __init__(self,number, balance, owner,rate):
+        self.number = number
+        self.balance = balance
+        self.owner = owner
+        self.rate = rate
+    def tickInterest(self):
+        self.balance+=self.balance*self.rate*.01
 
 accounts=[]
 def clearscreen():
     for widget in root.winfo_children():
         widget.destroy()
-def accountconfirm(entered):
+def accountconfirm(entered,rate,acctype):
     accnum=len(accounts)
-    accounts.append(Account(accnum,0.00,entered))
+    if acctype==0: accounts.append(Account(accnum,0.00,entered))
+    else: accounts.append(SavingsAccount(accnum,0.00,entered,rate))
     popup=tk.Toplevel()
     tk.Label(popup,text=f"New Account for {entered} with the number {accnum}.").pack()
     tk.Button(popup,text="Done",command=home).pack()
-def newaccount():
+def newaccount(acctype):
     clearscreen()
     tk.Label(root,text="Name:").pack()
-    entry = tk.Entry(root)
-    entry.pack()
-    tk.Button(root,text="Enter",command=lambda: accountconfirm(str(entry.get()))).pack()
+    entry1 = tk.Entry(root)
+    entry1.pack()
+    tk.Label(root,text="Rate:").pack()
+    entry2 = tk.Entry(root)
+    entry2.pack()
+    tk.Button(root,text="Enter",command=lambda: accountconfirm(str(entry1.get()),float(entry2.get()),acctype)).pack()
 def depositconfirm(amount,accnum):
     fail=True
     clearscreen()
@@ -51,10 +65,9 @@ def depositconfirm(amount,accnum):
         if account.number==accnum:
             fail=False
             tk.Label(root,text=account.deposit(amount)).pack()
-            tk.Button(root,text="Done",command=home).pack()
     if fail:
         tk.Label(root,text="Failed to deposit, account does not exist.").pack()
-        tk.Button(root,text="Done",command=home).pack() 
+    tk.Button(root,text="Done",command=home).pack() 
 def deposit():
     clearscreen()
     tk.Label(root,text="Deposit Amount:").pack()
@@ -71,10 +84,9 @@ def withdrawconfirm(amount,accnum):
         if account.number==accnum:
             fail=False
             tk.Label(root,text=account.withdraw(amount)).pack()
-            tk.Button(root,text="Done",command=home).pack()
     if fail:
         tk.Label(root,text="Failed to withdraw, account does not exist.").pack()
-        tk.Button(root,text="Done",command=home).pack() 
+    tk.Button(root,text="Done",command=home).pack() 
 def withdraw():
     clearscreen()
     tk.Label(root,text="Withdraw Amount:").pack()
@@ -91,10 +103,9 @@ def gambleconfirm(amount,accnum):
         if account.number==accnum:
             fail=False
             tk.Label(root,text=account.gamble(amount)).pack()
-            tk.Button(root,text="Done",command=home).pack()
     if fail:
         tk.Label(root,text="Failed to gamble, account does not exist.").pack()
-        tk.Button(root,text="Done",command=home).pack()
+    tk.Button(root,text="Done",command=home).pack()
 def gamble():
     clearscreen()
     tk.Label(root,text="Gamble Amount:").pack()
@@ -104,16 +115,36 @@ def gamble():
     entry2 = tk.Entry(root)
     entry2.pack()
     tk.Button(root,text="Enter",command=lambda: gambleconfirm(float(entry1.get()),int(entry2.get()))).pack()
+def balconfirm(accnum):
+    clearscreen()
+    for account in accounts:
+        if account.number==accnum:
+            fail=False
+            tk.Label(root,text=account.checkbalance()).pack()
+    if fail:
+        tk.Label(root,text="Failed to gamble, account does not exist.").pack()
+    tk.Button(root,text="Done",command=home).pack()
+def checkbal():
+    clearscreen()
+    tk.Label(root,text="Account Number:").pack()
+    entry=tk.Entry(root)
+    entry.pack()
+    tk.Button(root,text="Check Balance",command=lambda: balconfirm(int(entry.get()))).pack()
+def interest():
+    for acc in accounts:
+        if type(acc) is SavingsAccount: acc.tickInterest()
 def home():
     clearscreen()
     root.title("Bank Python")
     tk.Label(root,text="Welcome to Bank Python").pack()
-    tk.Button(root,text="New Account",command=newaccount).pack()
+    tk.Button(root,text="New Base Account",command=lambda:newaccount(0)).pack()
+    tk.Button(root,text="New Savings Account",command=lambda:newaccount(1)).pack()
     tk.Button(root,text="Deposit",command=deposit).pack()
     tk.Button(root,text="Withdraw",command=withdraw).pack()
     tk.Button(root,text="Gamble",command=gamble).pack()
+    tk.Button(root,text="Check Balance",command=checkbal).pack()
+    tk.Button(root,text="Tick Interest",command=interest).pack()
 root = tk.Tk()
 home()
 root.mainloop()
-print(len(accounts))
 sys.exit()
