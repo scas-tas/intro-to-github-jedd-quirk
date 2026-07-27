@@ -1,0 +1,10 @@
+BEGIN most_empty_row()
+    FOR rows_done TO row_count
+        FOR columns_done TO column_count
+            IF cell_empty THEN
+                this_rows_empty_counter++
+        IF this_row_has_most_empty THEN
+            best_row=this_row
+    NEXT
+    DISPLAY best_row_better_than_rest
+END
