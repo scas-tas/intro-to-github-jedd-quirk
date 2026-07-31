@@ -12,12 +12,19 @@ def remove_item(inventory: dict, name: str, quantity: int) -> None:
         inventory[name]=-1
  
 def get_stock_report(inventory: dict) -> str:
+    fordel=[]
     for i in inventory:
         if inventory[i]>0:
             print(f"{i}: {inventory[i]}")
         else:
-            if inventory[i]!=-1: print(f"({i} at 0 -- excluded)")
-            else: print(f"(no error -- {i} never existed)")
+            if inventory[i]>-1:
+                print(f"({i} at 0 -- excluded)")
+                fordel.append(i)
+            else:
+                print(f"(no error -- {i} never existed)")
+                fordel.append(i)
+    for i in fordel:
+        del inventory[i]
 
 inv={}
 add_item(inv, 'apples', 10)
