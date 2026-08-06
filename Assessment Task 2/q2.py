@@ -1,7 +1,5 @@
-def count_empty(classroom: list) -> int:
-    count = 0
-    for row in classroom:
-        count+=row.count(0)
+def count_empty(classroom: list,count = 0) -> int:
+    for row in classroom:count+=row.count(0)
     return count
  
 def most_empty_row(classroom: list) -> int:
