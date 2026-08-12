@@ -4,12 +4,9 @@ def add_item(inventory: dict, name: str, quantity: int) -> None:
  
 def remove_item(inventory: dict, name: str, quantity: int) -> None:
     if name in inventory:
-        if quantity>=inventory[name]:
-            inventory[name]=0
-        else:
-            inventory[name]-=quantity
-    else:
-        inventory[name]=-1
+        if quantity>=inventory[name]:inventory[name]=0
+        else:inventory[name]-=quantity
+    else:inventory[name]=-1
  
 def get_stock_report(inventory: dict) -> str:
     fordel=[]
