@@ -1,1 +1,1 @@
-m="QUIET";print(*["@BCD#FGH%JKLMN*PQRST$WXYZV"["ZYXWUTSRQPONMLKJIHGFEDCBAV".index(i)] for i in m],sep="")
+m="QUIET";print(*["@BCD#FGH%JKLMN*PQRST$WXYZV@bcd#fgh%jklmn*pqrst$wxyzv"["ZYXWUTSRQPONMLKJIHGFEDCBAVzyxwutsrqponmlkjihgfedcbav".index(i)] for i in m],sep="")
