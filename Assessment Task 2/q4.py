@@ -1,3 +1,5 @@
-def e(m: str, s) -> str:return "".join([(m[Mi],chr((ord(m[Mi].lower())-97+(([s],s)[isinstance(s, str)][0],ord(str(([s],s)[isinstance(s, str)]).lower()[Mi%len(str(([s],s)[isinstance(s, str)]))])-97)[isinstance(([s],s)[isinstance(s, str)][0],str)])%26+97-32*m[Mi].isupper()))[m[Mi].isalpha()] for Mi in range(len(m))])
-def d(m: str, s) -> str:return "".join([(m[Mi],chr((ord(m[Mi].lower())-97-(([s],s)[isinstance(s, str)][0],ord(str(([s],s)[isinstance(s, str)]).lower()[Mi%len(str(([s],s)[isinstance(s, str)]))])-97)[isinstance(([s],s)[isinstance(s, str)][0],str)])%26+97-32*m[Mi].isupper()))[m[Mi].isalpha()] for Mi in range(len(m))])
-print(e("Hello, World!","KEY"))
+#def e(m: str, s):S=([s],s)[isinstance(s, str)][0];return "".join([(m[Mi],chr((ord(m[Mi].lower())-97+(S,ord(str(S).lower()[Mi%len(str(S))])-97)[isinstance(S[0],str)])%26+97-32*m[Mi].isupper()))[m[Mi].isalpha()] for Mi in range(len(m))])
+#def d(m: str, s):return e(m,-s)
+def e(m: str,s):S=([s],[ord(str(s)[i].lower())-97 for i in range(len(str(s)))])[isinstance(s,str)];return "".join([(m[i],chr((ord(m[i].lower())-97+S[i%len(S)])%26+65+32*m[i].islower()))[m[i].isalpha()] for i in range(len(m))])
+def d(m: str,s):S=([s],[ord(str(s)[i].lower())-97 for i in range(len(str(s)))])[isinstance(s,str)];return "".join([(m[i],chr((ord(m[i].lower())-97-S[i%len(S)])%26+65+32*m[i].islower()))[m[i].isalpha()] for i in range(len(m))])
+print(d(e("Hello, World!","KEY"),"KEY"))
