@@ -1,3 +1,1 @@
-n="";l=[]
-while (n:=input("?"))!="-1":l+=[int(n)]
-print(sum(l)/len(l))
+l=[*iter(lambda:int(input("? ")),-1)];print(sum(l[0:len(l)-1])/max(1,len(l)-1))

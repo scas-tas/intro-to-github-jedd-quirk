@@ -1,0 +1,1 @@
+l=[*iter(lambda:int(input("? ")),-1)];print(sum(l)/max(1,len(l)))
